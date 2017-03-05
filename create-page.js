@@ -93,6 +93,33 @@ module.exports = function createPage(ComponentClass: Class<Component>) {
       // if (__DEV__) {
       //   console.log('%c%s updateData(%o)', 'color:#2a8f99', page.__route__, utils.getDebugObject(newData));
       // }
+      // 对于 immutable 对象，仅更新必要的数据，state.xxx,props.xxx，扁平化为 _state_xxx, _props_xxx，减少渲染次数，优化性能，并解决input value属性重复渲染问题
+      const data = {
+        state: newData.state,
+        props: newData.props
+      };
+      if (newData !== undefined && page.lastDdata !== undefined) {
+        let prefix = 'state';
+        if (page.lastDdata[prefix] !== newData[prefix]) {
+          Object.keys(newData[prefix]).forEach((key) => {
+            if (page.lastDdata[prefix][key] !== newData[prefix][key]) {
+              data['_' + prefix + '_' + key] = newData[prefix][key];
+            }
+          });
+        }
+
+        prefix = 'props';
+        if (page.lastDdata[prefix] !== newData[prefix]) {
+          Object.keys(newData[prefix]).forEach((key) => {
+            if (page.lastDdata[prefix][key] !== newData[prefix][key]) {
+              data['_' + prefix + '_' + key] = newData[prefix][key];
+            }
+          });
+        }
+      }
+      page.lastDdata = newData;
+/*
+
       let data = page.data;
 
       Object.keys(newData).forEach((path) => {
@@ -107,6 +134,7 @@ module.exports = function createPage(ComponentClass: Class<Component>) {
         }
       });
 
+*/
       page.setData(data);
     };
 
