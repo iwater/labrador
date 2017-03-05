@@ -98,20 +98,21 @@ module.exports = function createPage(ComponentClass: Class<Component>) {
         state: newData.state,
         props: newData.props
       };
-      if (newData !== undefined && page.lastDdata !== undefined) {
+      const lastDdata = Object.assign({ state: {}, props: {} }, page.lastDdata);
+      if (newData !== undefined) {
         let prefix = 'state';
-        if (page.lastDdata[prefix] !== newData[prefix]) {
+        if (lastDdata[prefix] !== newData[prefix]) {
           Object.keys(newData[prefix]).forEach((key) => {
-            if (page.lastDdata[prefix][key] !== newData[prefix][key]) {
+            if (lastDdata[prefix][key] !== newData[prefix][key]) {
               data['_' + prefix + '_' + key] = newData[prefix][key];
             }
           });
         }
 
         prefix = 'props';
-        if (page.lastDdata[prefix] !== newData[prefix]) {
+        if (lastDdata[prefix] !== newData[prefix]) {
           Object.keys(newData[prefix]).forEach((key) => {
-            if (page.lastDdata[prefix][key] !== newData[prefix][key]) {
+            if (lastDdata[prefix][key] !== newData[prefix][key]) {
               data['_' + prefix + '_' + key] = newData[prefix][key];
             }
           });
